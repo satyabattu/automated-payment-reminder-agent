@@ -1,0 +1,145 @@
+{
+  "name": "paymentAgent",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 12,
+              "triggerAtMinute": 42
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "id": "53ccf295-a85e-407e-9ac4-78208a388937",
+      "name": "Schedule Trigger",
+      "executeOnce": true
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1FhmN3y9rpcV1cpxS03_9oX44fFCxiT1EkAU0fXWYyUM",
+          "mode": "list",
+          "cachedResultName": "payment",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FhmN3y9rpcV1cpxS03_9oX44fFCxiT1EkAU0fXWYyUM/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1FhmN3y9rpcV1cpxS03_9oX44fFCxiT1EkAU0fXWYyUM/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        208,
+        0
+      ],
+      "id": "c0ad0341-0ee1-4f90-9596-cd97c798b952",
+      "name": "Get row(s) in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "mJOMytg40n5PUo28",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Get today's date string in yyyy-mm-dd format\nconst today = new Date().toISOString().split('T')[0];\n\n// Filter rows where Due Date matches today\nreturn items.filter(item => {\n  const dueDate = item.json[\"date\"];\n  return dueDate === today;\n})"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        416,
+        0
+      ],
+      "id": "1d38039e-e38f-4fe7-a516-033ab88bb01b",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "sendTo": "=satyabattu2331@gmail.com {{ $('Get row(s) in sheet').item.json.Email }}",
+        "subject": "payment reminder",
+        "emailType": "text",
+        "message": "payment due please pay",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        624,
+        0
+      ],
+      "id": "c7316d38-fcd4-4e95-ae0a-665a35d8cac8",
+      "name": "Send a message",
+      "webhookId": "c6cddf0e-4dec-486c-b062-2cd41f19fec7",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "fGr3mcDmbKrIaatq",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Get row(s) in sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "bd8bdf86-5d4f-4874-af38-60755d89b95f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "dba0e614b12ce4cf39b35cefa3eb15ad030a6f319d1b7e902d4d6d0a582b51ec"
+  },
+  "id": "GuRBcjl94M7UC8Ui",
+  "tags": []
+}
